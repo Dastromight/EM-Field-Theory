@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EM Field Theory Quiz</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #0b2b3b; text-align: center; }
+        .question { margin-bottom: 20px; padding: 15px; border-bottom: 1px solid #eee; }
+        .options { margin-top: 10px; }
+        .opt { display: block; margin: 5px 0; cursor: pointer; }
+        .btn-box { text-align: center; margin-top: 20px; padding: 20px; }
+        button { padding: 10px 25px; font-size: 16px; cursor: pointer; background: #1f6e8c; color: white; border: none; border-radius: 5px; }
+        #results { margin-top: 20px; padding: 15px; display: none; border-radius: 5px; background: #eef3f8; border-left: 5px solid #1f6e8c; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Electromagnetic Field Theory Quiz</h1>
+    <p style="text-align:center">50 Essential Questions</p>
+    <div id="quiz-box">Loading...</div>
+    <div class="btn-box">
+        <button onclick="checkScore()">Submit Answers</button>
+    </div>
+    <div id="results"></div>
+</div>
+
+<script>
+
+ 
+const data = [
+    {q: "Electromagnetics (EM) is a branch of physics/engineering studying:", a: ["Only electric phenomena", "Only magnetic phenomena", "Both electric and magnetic phenomena", "Gravitational phenomena"], c: 2},
+    {q: "EMI manifests itself in communication links as:", a: ["Signal", "Noise", "Power", "Voltage"], c: 1},
+    {q: "EMI is electromagnetic energy that:", a: ["Improves performance", "Adversely affects electrical equipment", "Has no effect", "Only affects mechanical systems"], c: 1},
+    {q: "EMC is the ability of systems to function in intended environments without degradation due to:", a: ["Ideal conditions", "Intentional EMI", "Maximum EMI", "No grounding"], c: 1},
+    {q: "Common noise reduction methods include all EXCEPT:", a: ["Proper circuit design", "Shielding and filtering", "Increasing radiated emissions", "Isolation and orientation"], c: 2},
+    {q: "EMI is the degradation in device performance due to:", a: ["Fields in the EM environment", "Power supply voltage", "Mechanical vibration", "Thermal noise"], c: 0},
+    {q: "EMC is achieved when a device functions without introducing:", a: ["Intolerable disturbances", "Maximum disturbances", "Vacuum operation", "Ignoring external fields"], c: 0},
+    {q: "The three basic elements of EMI are:", a: ["Source, Path, Receiver", "Voltage, Current, Resistance", "L, C, R", "E, B, G fields"], c: 0},
+    {q: "Interference occurs if received energy causes the receptor to function:", a: ["Normally", "In an unwanted manner", "At zero power", "At DC only"], c: 1},
+    {q: "The coupling path in an EMI situation should be made:", a: ["Efficient", "Inefficient", "Conducting", "Insulating"], c: 1},
+    {q: "Radiated emission occurs when a source interferes with:", a: ["A nearby component", "Distant components", "The power supply", "The ground plane"], c: 0},
+    {q: "Radiated susceptibility means a component is sensitive to:", a: ["External EM energy", "Internal noise", "DC voltage", "Thermal noise"], c: 0},
+    {q: "Narrow band interference arises from:", a: ["TV/Radio stations, cell phones", "Power lines only", "Motors only", "Lightning"], c: 0},
+    {q: "Broad band interference usually comes from:", a: ["Incidental emitters like motors/power lines", "Intentional transmitters", "Cell phones", "TV stations"], c: 0},
+    {q: "Conducted EMI is caused by:", a: ["Physical contact of conductors", "Induction only", "Gravity", "Thermal expansion"], c: 0},
+    {q: "In conducted interference, disturbances in the field:", a: ["Stay on the surface", "Radiate away", "Disappear", "Become zero"], c: 1},
+    {q: "Intra-system EMI occurs:", a: ["Within the same system", "Between different systems", "Natural sources only", "Man-made only"], c: 0},
+    {q: "Inter-system EMI occurs:", a: ["Between different systems", "Within the same system", "Lightning only", "Power supplies only"], c: 0},
+    {q: "An example of an intra-system EMI emitter is:", a: ["Power supplies", "Lightning", "TV sets", "Pacemakers"], c: 0},
+    {q: "An example of an inter-system EMI susceptor is:", a: ["Aircraft navigation", "Relays", "Ignition systems", "Fluorescent lights"], c: 0},
+    {q: "One effect of EMI is:", a: ["TV/Radio disturbance", "Signal improvement", "Less power use", "Longer battery"], c: 0},
+    {q: "A serious effect of EMI is failure of a:", a: ["Pacemaker", "Computer", "TV", "Mobile phone"], c: 0},
+    {q: "Sources of EMI are classified as:", a: ["Natural and Man-made", "Natural only", "Man-made only", "Functional only"], c: 0},
+    {q: "A natural source of EMI is:", a: ["Lightning", "Radio", "Telephone", "Radar"], c: 0},
+    {q: "Functional EMI originates from sources:", a: ["Designed to generate EM energy", "Not designed for EM energy", "Solar only", "Rain only"], c: 0},
+    {q: "Incidental EMI comes from man-made sources:", a: ["Not designed for EM but causing it", "Designed for EM", "Natural", "Interstellar"], c: 0},
+    {q: "Three common EMI control techniques are:", a: ["Grounding, Shielding, Filtering", "Removing filters", "Grounding only", "Shielding only"], c: 0},
+    {q: "Grounding establishes a conductive path between:", a: ["Two points", "Insulators", "High impedance", "Magnetic points"], c: 0},
+    {q: "An ideal ground plane has:", a: ["Zero potential/impedance", "High potential", "Infinite impedance", "Magnetic reference"], c: 0},
+    {q: "Bonding establishes a low-impedance path between:", a: ["Two metal surfaces", "High impedance", "Insulators", "Dielectrics"], c: 0},
+    {q: "Shielding purpose is to:", a: ["Confine or block energy", "Increase energy", "Remove energy", "Convert fields"], c: 0},
+    {q: "Shielding effectiveness (SE) is 10 log10 of:", a: ["Incident/Transmitted power", "V2/V1", "Permeability", "Permittivity"], c: 0},
+    {q: "An electrical filter is a network of:", a: ["R, L, C", "R only", "L only", "C only"], c: 0},
+    {q: "Insertion loss (IL) of a filter is 20 log10 of:", a: ["V2/V1", "Power density", "Speed of light", "Permeability"], c: 0},
+    {q: "EMC studies unintentional EM energy regarding:", a: ["EMI", "Intentional EMI", "DC only", "Mechanicals"], c: 0},
+    {q: "A system is compatible if it doesn't interfere with:", a: ["Others, itself, or be susceptible", "Maximum EMI", "External fields", "Vacuum"], c: 0},
+    {q: "Which describes EMC?", a: ["Live and let live", "Maximum noise", "Ignore noise", "DC only"], c: 0},
+    {q: "Electromagnetics studies phenomena from charges:", a: ["At rest or in motion", "Mechanical", "Gravitational", "Thermal"], c: 0},
+    {q: "Electron comes from the Greek word for:", a: ["Amber", "Iron", "Copper", "Silk"], c: 0},
+    {q: "Electric field sources are:", a: ["Positive/Negative charges", "Positive only", "Negative only", "Magnetic monopoles"], c: 0},
+    {q: "Moving charges produce current which creates a:", a: ["Magnetic field", "Electric field only", "Gravity", "Heat"], c: 0},
+    {q: "Time-varying E and B fields coupled results in:", a: ["EM field", "Static field", "DC only", "Vibration"], c: 0},
+    {q: "Fields and waves explain:", a: ["Action at a distance", "Contact forces", "Mechanical links", "Chemicals"], c: 0},
+    {q: "Satellite communication uses:", a: ["E and B fields", "Gravity", "Mechanicals", "Wires"], c: 0},
+    {q: "An antenna end looks like an:", a: ["Open circuit", "Short circuit", "Resistor", "Inductor"], c: 0},
+    {q: "EM concepts explain mobile comms because:", a: ["Circuit theory is limited", "Circuit theory is enough", "DC is enough", "Resistors only"], c: 0},
+    {q: "Three steps in building theory: Define quantities, math rules, and:", a: ["Postulate laws", "Define quantities only", "Kirchhoff", "Laplace"], c: 0},
+    {q: "EM Model Step 1 is:", a: ["Define basic quantities", "Vector calculus", "Maxwell", "Wave equations"], c: 0},
+    {q: "EM Model Step 2 involves:", a: ["Vector algebra/calculus", "Kirchhoff", "Ohm", "KVL"], c: 0},
+    {q: "Source quantities include current and charge:", a: ["Densities (v, s, l)", "E and H", "B and D", "Resistance"], c: 0}
+];
+
+function init() {
+    let h = "";
+    data.forEach((item, i) => {
+        h += `<div class="question"><strong>${i+1}. ${item.q}</strong><div class="options">`;
+        item.a.forEach((opt, j) => {
+            h += `<label class="opt"><input type="radio" name="q${i}" value="${j}"> ${opt}</label>`;
+        });
+        h += `</div></div>`;
+    });
+    document.getElementById("quiz-box").innerHTML = h;
+}
+
+function checkScore() {
+    let s = 0;
+    const labels = ["(a)", "(b)", "(c)", "(d)"];
+    let tableHTML = `
+        <table border="1" style="width:100%; border-collapse: collapse; margin-top: 20px; background: white; font-family: sans-serif;">
+            <thead>
+                <tr style="background: #0b2b3b; color: white;">
+                    <th style="padding: 10px;">Question #</th>
+                    <th style="padding: 10px;">Your Choice</th>
+                    <th style="padding: 10px;">Correct Answer</th>
+                    <th style="padding: 10px;">Status</th>
+                </tr>
+            </thead>
+            <tbody>`;
+
+    data.forEach((item, i) => {
+        const sel = document.querySelector(`input[name="q${i}"]:checked`);
+        const userVal = sel ? parseInt(sel.value) : null;
+        const isCorrect = userVal === item.c;
+        if (isCorrect) s++;
+
+        tableHTML += `
+            <tr style="text-align: center; background: ${isCorrect ? '#e7f3ef' : '#fbe9e7'};">
+                <td style="padding: 8px; font-weight: bold;">${i + 1}</td>
+                <td style="padding: 8px;">${userVal !== null ? labels[userVal] : "Not Answered"}</td>
+                <td style="padding: 8px; font-weight: bold;">${labels[item.c]}</td>
+                <td style="padding: 8px; font-weight: bold; color: ${isCorrect ? '#2e7d32' : '#d32f2f'};">
+                    ${isCorrect ? 'CORRECT ✅' : 'WRONG ❌'}
+                </td>
+            </tr>`;
+    });
+
+    tableHTML += `</tbody></table>`;
+    
+    const r = document.getElementById("results");
+    r.style.display = "block";
+    r.innerHTML = `<h2 style="text-align:center; color:#1f6e8c;">Final Score: ${s} / 50</h2>` + tableHTML;
+    window.scrollTo({ top: r.offsetTop, behavior: 'smooth' });
+}
+
+window.onload = init;
+</script>
+
+</body>
+</html>
